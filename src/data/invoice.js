@@ -15,18 +15,21 @@ export const invoice = {
     },
     items: [
       {
+        id:1,
         product: "Laptop HP 15",
         price: 899,
         quantity: 4, },
       {
+        id:2,
         product: "Monitor 24",
         price: 399,
         quantity: 5,
       },
       {
+        id:3,
         product: "teclado inalambrico",
-        price: 1,
-        quantity: 1,
+        price: 125,
+        quantity: 5,
       },
     ],
   },
