@@ -1,7 +1,9 @@
-export const ClientView = ({client}) =>{
+import PropTypes from 'prop-types';
+
+export const ClientView = ({title,client}) =>{
     return(
         <>
-        <h3>Datos del Cliente</h3>
+        <h3>{title}</h3>
                 <ul className="list-group">
                   <li className="list-group-item active">
                     {client.name} {client.lastNAme}
@@ -14,3 +16,7 @@ export const ClientView = ({client}) =>{
         </>
     )
 };
+ClientView.prototype = {
+  title: PropTypes.string.isRequired,
+  client: PropTypes.object.isRequired,
+}

@@ -9,6 +9,7 @@ export const invoice = {
       city: "eleven street",
       number: 12,
     },
+  },
     company: {
       name: "Laptop Place",
       fisicalNumber: 123456,
@@ -17,20 +18,20 @@ export const invoice = {
       {
         id:1,
         product: "Laptop HP 15",
-        price: 899,
-        quantity: 4, },
+        price: 1099,
+        quantity: 1, },
       {
         id:2,
         product: "Monitor 24",
-        price: 399,
-        quantity: 5,
+        price: 200,
+        quantity: 1,
       },
       {
         id:3,
         product: "teclado inalambrico",
-        price: 125,
-        quantity: 5,
+        price: 79,
+        quantity: 1,
       },
     ],
-  },
+  
 };
