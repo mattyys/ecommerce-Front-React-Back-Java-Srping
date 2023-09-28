@@ -20,6 +20,9 @@ export const InvoiceApp = () => {
 
   const [items, setItems] = useState(initialItems);
 
+  //se inicializa a partir de el ultimo numero que se tenga en la factura
+  const [counter, setCounter] = useState(4);
+
   return (
     <>
       <div className="container">
@@ -41,15 +44,21 @@ export const InvoiceApp = () => {
 
             <form className="w-50" onSubmit={event =>{
               event.preventDefault();
+
+              if(productValue.trim().length <= 1) return;
+              if(priceValue.trim().length <= 1) return;
+              if(quantityValue.trim().length < 1) return;
+
               setItems([...items, {
-                id:4,
-                product: productValue, 
-                price: +priceValue, 
+                id:counter,
+                product: productValue.trim, 
+                price: parseFloat(priceValue), 
                 quantity: parseInt(quantityValue, 10)
               }]);
               setProductValue('');
               setPriceValue('');
               setQuantityValue('');
+              setCounter(counter + 1);
             }}>
               <input
                 className="form-control m-3"
@@ -64,7 +73,7 @@ export const InvoiceApp = () => {
               />
               <input
                 className="form-control m-3"
-                type="text"
+                type="number"
                 name="price"
                 value={priceValue}
                 placeholder="Price"
@@ -75,7 +84,7 @@ export const InvoiceApp = () => {
               />
               <input
                 className="form-control m-3"
-                type="text"
+                type="number"
                 name="quantity"
                 value={quantityValue}
                 placeholder="Quantity"
@@ -84,7 +93,10 @@ export const InvoiceApp = () => {
                   setQuantityValue(event.target.value);
                 }}
               />
-              <button type="submit" className="btn btn-primary">Crear Item</button>
+              <button 
+                type="submit" 
+                className="btn btn-primary m-3"
+              >Crear Item</button>
             </form>
           </div>
         </div>
