@@ -23,83 +23,111 @@ export const InvoiceApp = () => {
   //se inicializa a partir de el ultimo numero que se tenga en la factura
   const [counter, setCounter] = useState(4);
 
+  const onProductChange = (event) => {
+    console.log(event.target.value);
+    setProductValue(event.target.value);
+  };
+  //en esta funcion se desetructura el event
+  const onPriceChange = ({target}) => {
+    console.log(target.value);
+    setPriceValue(target.value);
+  };
+
+  const onQuantityChange = ({target}) => {
+    console.log(target.value);
+    setQuantityValue(target.value);
+  };
+  const onInvoiceItemSubmit = (event) => {
+    {
+      event.preventDefault();
+
+      if(productValue.trim().length <= 1) return;
+      if(priceValue.trim().length <= 1) return;
+      if(quantityValue.trim().length < 1) return;
+
+      setItems([...items, {
+        id:counter,
+        product: productValue.trim, 
+        price: parseFloat(priceValue), 
+        quantity: parseInt(quantityValue, 10)
+      }]);
+      setProductValue('');
+      setPriceValue('');
+      setQuantityValue('');
+      setCounter(counter + 1);
+    }
+  };
+
   return (
     <>
       <div className="container">
+       
         <div className="card my-3">
+       
           <div className="card-header">Ejemplo factura</div>
+       
           <div className="card-body">
+       
             <InvoiceView id={invoice.id} name={invoice.name} />
 
+       
             <section className="row my-3">
+       
               <div className="col">
                 <ClientView title="Cliente" client={client} />
               </div>
+       
               <div className="col">
                 <CompanyView title="Datos de la empresa" company={company} />
               </div>
+       
             </section>
+       
             <ItemListView title="Productos de la Factura" items={items} />
+       
             <TotalView total={total} />
 
-            <form className="w-50" onSubmit={event =>{
-              event.preventDefault();
-
-              if(productValue.trim().length <= 1) return;
-              if(priceValue.trim().length <= 1) return;
-              if(quantityValue.trim().length < 1) return;
-
-              setItems([...items, {
-                id:counter,
-                product: productValue.trim, 
-                price: parseFloat(priceValue), 
-                quantity: parseInt(quantityValue, 10)
-              }]);
-              setProductValue('');
-              setPriceValue('');
-              setQuantityValue('');
-              setCounter(counter + 1);
-            }}>
+            <form className="w-50" onSubmit={event => onInvoiceItemSubmit(event)}>
+       
               <input
                 className="form-control m-3"
                 type="text"
                 name="product"
                 value={productValue}
                 placeholder="Product name"
-                onChange={(event) => {
-                  console.log(event.target.value);
-                  setProductValue(event.target.value);
-                }}
+                onChange={(event) => onProductChange(event)}
               />
+       
               <input
                 className="form-control m-3"
                 type="number"
                 name="price"
                 value={priceValue}
                 placeholder="Price"
-                onChange={(event) => {
-                  console.log(event.target.value);
-                  setPriceValue(event.target.value);
-                }}
+                onChange={// se simplifica poruqe al recibir y devolver el mismo evento esta implicito
+                  onPriceChange}
               />
+           
               <input
                 className="form-control m-3"
                 type="number"
                 name="quantity"
                 value={quantityValue}
                 placeholder="Quantity"
-                onChange={(event) => {
-                  console.log(event.target.value);
-                  setQuantityValue(event.target.value);
-                }}
+                onChange={onQuantityChange}
               />
+           
               <button 
                 type="submit" 
                 className="btn btn-primary m-3"
               >Crear Item</button>
+           
             </form>
+         
           </div>
+       
         </div>
+     
       </div>
     </>
   );
