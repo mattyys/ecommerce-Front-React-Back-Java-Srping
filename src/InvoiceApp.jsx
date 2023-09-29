@@ -27,6 +27,7 @@ export const InvoiceApp = () => {
     console.log(event.target.value);
     setProductValue(event.target.value);
   };
+ 
   //en esta funcion se desetructura el event
   const onPriceChange = ({target}) => {
     console.log(target.value);
@@ -37,6 +38,7 @@ export const InvoiceApp = () => {
     console.log(target.value);
     setQuantityValue(target.value);
   };
+  
   const onInvoiceItemSubmit = (event) => {
     {
       event.preventDefault();
