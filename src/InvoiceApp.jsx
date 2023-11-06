@@ -13,49 +13,57 @@ export const InvoiceApp = () => {
   //se realiza destructuracion de la factura, se extrae cliente
   const { total, client, company, items: initialItems } = invoice;
   //en cliente se extrae company
+  //en items:initialItems se pasa lso items a la variavle initial items
 
-  const [productValue, setProductValue] = useState('');
-  const [priceValue, setPriceValue] = useState('');
-  const [quantityValue, setQuantityValue] = useState('');
+  //en esta constatnte reemplazamos los value product price e item
+  //const [productValue, setProductValue] = useState('');
+  //const [priceValue, setPriceValue] = useState('');
+  //const [quantityValue, setQuantityValue] = useState('');
+  const [invoiceItemsState, setInvoiceItemsState]= useState({
+    product:'',
+    price:'',
+    quantity:''
+  })
+
+  //desestucturamos los elementos de invoiceItemsState
+  const {product, price, quantity} = invoiceItemsState;
+  
 
   const [items, setItems] = useState(initialItems);
 
   //se inicializa a partir de el ultimo numero que se tenga en la factura
   const [counter, setCounter] = useState(4);
 
-  const onProductChange = (event) => {
-    console.log(event.target.value);
-    setProductValue(event.target.value);
+  const onFormItemChange = ( { target:{ name, value } }) => {
+    console.log(name);
+    console.log(value);
+    setInvoiceItemsState({
+      ...invoiceItemsState,
+      [name]:value
+    });
   };
  
-  //en esta funcion se desetructura el event
-  const onPriceChange = ({target}) => {
-    console.log(target.value);
-    setPriceValue(target.value);
-  };
-
-  const onQuantityChange = ({target}) => {
-    console.log(target.value);
-    setQuantityValue(target.value);
-  };
   
   const onInvoiceItemSubmit = (event) => {
     {
       event.preventDefault();
 
-      if(productValue.trim().length <= 1) return;
-      if(priceValue.trim().length <= 1) return;
-      if(quantityValue.trim().length < 1) return;
+      if(product.trim().length <= 1) return;//trim para quitar espacios al inicio y final
+      if(price.length < 1) return;
+      if(quantity.length < 1) return;
 
+      //con el operador spread ... se asignan los valores a item
       setItems([...items, {
         id:counter,
-        product: productValue.trim, 
-        price: parseFloat(priceValue), 
-        quantity: parseInt(quantityValue, 10)
+        product: product, 
+        price: parseFloat(price), 
+        quantity: parseInt(quantity, 10)
       }]);
-      setProductValue('');
-      setPriceValue('');
-      setQuantityValue('');
+      setInvoiceItemsState({
+        product:'',
+        price:'',
+        quantity:''
+      })
       setCounter(counter + 1);
     }
   };
@@ -89,34 +97,35 @@ export const InvoiceApp = () => {
        
             <TotalView total={total} />
 
-            <form className="w-50" onSubmit={event => onInvoiceItemSubmit(event)}>
+            <form className="w-50" onSubmit={event =>//la funcion que envia el formulario o factura
+               onInvoiceItemSubmit(event)}>
        
               <input
                 className="form-control m-3"
                 type="text"
                 name="product"
-                value={productValue}
+                value={product}
                 placeholder="Product name"
-                onChange={(event) => onProductChange(event)}
+                onChange={(event) => onFormItemChange(event)}
               />
        
               <input
                 className="form-control m-3"
                 type="number"
                 name="price"
-                value={priceValue}
+                value={price}
                 placeholder="Price"
                 onChange={// se simplifica poruqe al recibir y devolver el mismo evento esta implicito
-                  onPriceChange}
+                  onFormItemChange}
               />
            
               <input
                 className="form-control m-3"
                 type="number"
                 name="quantity"
-                value={quantityValue}
+                value={quantity}
                 placeholder="Quantity"
-                onChange={onQuantityChange}
+                onChange={onFormItemChange}
               />
            
               <button 
