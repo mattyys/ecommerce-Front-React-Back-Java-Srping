@@ -1,38 +1,68 @@
 //import { getInvoiceServices } from "./services/getInvoiceServices";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClientView } from "./components/invoice/ClienView";
 import { CompanyView } from "./components/invoice/CompanyView";
 import { InvoiceView } from "./components/invoice/InvoiceView";
 import { ItemListView } from "./components/invoice/ItemListView";
 import { TotalView } from "./components/invoice/TotalView";
-import { getInvoiceTotal } from "./services/getInvoiceTotal";
+import { getInvoiceTotal, calculateTotalInvoice } from "./services/getInvoiceTotal";
+
+const initialInvoice = {
+  id: 0,
+  name: "",
+  client: {
+    name: "",
+    lastNAme: "",
+    address: {
+      country: "",
+      city: "",
+      number: 0,
+    },
+  },
+  company: {
+    name: "",
+    fisicalNumber: 0,
+  },
+  items: [],}
 
 export const InvoiceApp = () => {
-  //se obtiene la factura
-  const invoice = getInvoiceTotal();
-  //se realiza destructuracion de la factura, se extrae cliente
-  const { total, client, company, items: initialItems } = invoice;
-  //en cliente se extrae company
-  //en items:initialItems se pasa lso items a la variavle initial items
-
-  //en esta constatnte reemplazamos los value product price e item
-  //const [productValue, setProductValue] = useState('');
-  //const [priceValue, setPriceValue] = useState('');
-  //const [quantityValue, setQuantityValue] = useState('');
+  
+  //const invoice = getInvoiceTotal();
+  const [invoice, setInvoice] = useState(initialInvoice);
+    
+  const [items, setItems] = useState([]);
+  
   const [invoiceItemsState, setInvoiceItemsState]= useState({
     product:'',
     price:'',
     quantity:''
   })
-
+  
+  //se inicializa a partir de el ultimo numero que se tenga en la factura
+  const [counter, setCounter] = useState(4);
+  
+  const [totalPrice, setTotalPrice] = useState(0);
+  
+  const {client, company} = invoice;
+  
   //desestucturamos los elementos de invoiceItemsState
   const {product, price, quantity} = invoiceItemsState;
   
+  useEffect(() => {
+    const invoiceData = getInvoiceTotal();
+    console.log(invoiceData);
+    setInvoice(invoiceData);
+    setItems(invoiceData.items);
+  },[]);
 
-  const [items, setItems] = useState(initialItems);
+  useEffect (() => {
+      setTotalPrice(calculateTotalInvoice(items));
+  },[items])
+  
 
-  //se inicializa a partir de el ultimo numero que se tenga en la factura
-  const [counter, setCounter] = useState(4);
+  
+
+
 
   const onFormItemChange = ( { target:{ name, value } }) => {
     console.log(name);
@@ -95,7 +125,7 @@ export const InvoiceApp = () => {
        
             <ItemListView title="Productos de la Factura" items={items} />
        
-            <TotalView total={total} />
+            <TotalView total= {totalPrice}/>
 
             <form className="w-50" onSubmit={event =>//la funcion que envia el formulario o factura
                onInvoiceItemSubmit(event)}>

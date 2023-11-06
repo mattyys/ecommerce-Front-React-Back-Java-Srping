@@ -17,10 +17,15 @@ export const getInvoiceTotal = () => {
   //con la funcion reduce se utiliza un acumulador el cual va sumando el valor de cada iteracion
   //en ultimo lugar ,0 es cuando se inicializa el acumulador
 //se aplica programacion funcional
-  const total = invoice.items
-    .map((item) => item.price * item.quantity)
-    .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+  const total = calculateTotalInvoice(invoice.items);
+    
 
   // con el operador spread se cloan la factura y se agrega el total obtenido
   return { ...invoice, total };
 };
+
+export const calculateTotalInvoice = (items = []) => {
+  return items
+  .map(item => item.price * item.quantity)
+  .reduce((accumulator,currentValue) => accumulator + currentValue, 0);
+}
