@@ -6,6 +6,7 @@ import { InvoiceView } from "./components/invoice/InvoiceView";
 import { ItemListView } from "./components/invoice/ItemListView";
 import { TotalView } from "./components/invoice/TotalView";
 import { getInvoiceTotal, calculateTotalInvoice } from "./services/getInvoiceTotal";
+import { InvoiceItemsView } from "./components/InvoiceItemsView/InvoiceItemsView";
 
 const initialInvoice = {
   id: 0,
@@ -27,26 +28,17 @@ const initialInvoice = {
 
 export const InvoiceApp = () => {
   
-  //const invoice = getInvoiceTotal();
+  const [activeForm, setActiveForm] = useState(false);
+  
   const [invoice, setInvoice] = useState(initialInvoice);
     
   const [items, setItems] = useState([]);
   
-  const [invoiceItemsState, setInvoiceItemsState]= useState({
-    product:'',
-    price:'',
-    quantity:''
-  })
-  
-  //se inicializa a partir de el ultimo numero que se tenga en la factura
   const [counter, setCounter] = useState(4);
   
   const [totalPrice, setTotalPrice] = useState(0);
   
   const {client, company} = invoice;
-  
-  //desestucturamos los elementos de invoiceItemsState
-  const {product, price, quantity} = invoiceItemsState;
   
   useEffect(() => {
     const invoiceData = getInvoiceTotal();
@@ -55,47 +47,32 @@ export const InvoiceApp = () => {
     setItems(invoiceData.items);
   },[]);
 
-  useEffect (() => {
-      setTotalPrice(calculateTotalInvoice(items));
-  },[items])
-  
 
-  
-
-
-
-  const onFormItemChange = ( { target:{ name, value } }) => {
-    console.log(name);
-    console.log(value);
-    setInvoiceItemsState({
-      ...invoiceItemsState,
-      [name]:value
-    });
-  };
+  useEffect(() => {
+    setTotalPrice(calculateTotalInvoice(items));
+  }, [items]);
  
   
-  const onInvoiceItemSubmit = (event) => {
+  const handlerAddInvoiceItem = ({product, price, quantity}) => {
     {
-      event.preventDefault();
-
-      if(product.trim().length <= 1) return;//trim para quitar espacios al inicio y final
-      if(price.length < 1) return;
-      if(quantity.length < 1) return;
-
-      //con el operador spread ... se asignan los valores a item
+       //con el operador spread ... se asignan los valores a item
       setItems([...items, {
         id:counter,
         product: product, 
         price: parseFloat(price), 
         quantity: parseInt(quantity, 10)
       }]);
-      setInvoiceItemsState({
-        product:'',
-        price:'',
-        quantity:''
-      })
+
       setCounter(counter + 1);
     }
+  };
+
+  const onActiveForm = () => {
+    setActiveForm(!activeForm);
+  };
+
+  const handlerDeleteItem = (id) => {
+    setItems(items.filter(item => item.id !== id));
   };
 
   return (
@@ -123,48 +100,14 @@ export const InvoiceApp = () => {
        
             </section>
        
-            <ItemListView title="Productos de la Factura" items={items} />
+            <ItemListView title="Productos de la Factura" items={items} 
+            handlerDeleteItem={id => handlerDeleteItem(id)}/>
        
             <TotalView total= {totalPrice}/>
+            <button className="btn btn-secondary" onClick={onActiveForm}>
+              {!activeForm ? 'Agregar Item' : 'Ocultar'}</button>
+              {!activeForm ? '':<InvoiceItemsView  handler={ (newItem) => handlerAddInvoiceItem(newItem)}/>}
 
-            <form className="w-50" onSubmit={event =>//la funcion que envia el formulario o factura
-               onInvoiceItemSubmit(event)}>
-       
-              <input
-                className="form-control m-3"
-                type="text"
-                name="product"
-                value={product}
-                placeholder="Product name"
-                onChange={(event) => onFormItemChange(event)}
-              />
-       
-              <input
-                className="form-control m-3"
-                type="number"
-                name="price"
-                value={price}
-                placeholder="Price"
-                onChange={// se simplifica poruqe al recibir y devolver el mismo evento esta implicito
-                  onFormItemChange}
-              />
-           
-              <input
-                className="form-control m-3"
-                type="number"
-                name="quantity"
-                value={quantity}
-                placeholder="Quantity"
-                onChange={onFormItemChange}
-              />
-           
-              <button 
-                type="submit" 
-                className="btn btn-primary m-3"
-              >Crear Item</button>
-           
-            </form>
-         
           </div>
        
         </div>
