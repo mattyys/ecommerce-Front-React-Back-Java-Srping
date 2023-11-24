@@ -18,7 +18,7 @@ export const ItemListView = ({title, items, handlerDeleteItem}) => {
 
         <tbody>
           {
-            //tambien se puede setructurar item en ({product, price,quantity})
+            //tambien se puede destructurar item en ({product, price,quantity})
             items.map((item) => {
               return (
                 <RowItemView 
